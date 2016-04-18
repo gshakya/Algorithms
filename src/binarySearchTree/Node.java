@@ -1,5 +1,6 @@
 package binarySearchTree;
 
+
 public class Node {
 	private Node parent;
 	private Node left;
@@ -105,7 +106,7 @@ public class Node {
 		System.out.println(data);
 	}
 
-	public Node sucessor(Node n) {
+	public Node sucessorOf(Node n) {
 		if (n.right != null) {
 			return minNode(n.right);
 		}
@@ -119,14 +120,84 @@ public class Node {
 	}
 
 	public Node sucessor() {
-		return sucessor(this);
+		return sucessorOf(this);
+	}
+
+	public void deleteNode(int o) {
+		deleteNode(o, this);
+	}
+
+	public void deleteNode(int o, Node n) {
+		Node auxNode = new Node(999999999);
+		auxNode.setRight(n);
+		Node targetNode = auxNode.searchData(o);
+		if (targetNode == null) {
+			return;
+		}
+		// if the target has no child or a single child
+		if (targetNode.right == null) {
+			if (targetNode.parent.left == targetNode) {
+				targetNode.parent.left = targetNode.left;
+			}
+
+			if (targetNode.parent.right == targetNode) {
+				targetNode.parent.right = targetNode.left;
+			}
+
+			if (targetNode.left != null) {
+				targetNode.left.parent = targetNode.parent;
+			}
+			targetNode = null;
+		}
+
+		else {
+			Node sucessor = auxNode.sucessorOf(targetNode);
+			if (sucessor.parent.left == sucessor) {
+				sucessor.parent.left = sucessor.right;
+			}
+
+			if (sucessor.parent.right == sucessor) {
+				sucessor.parent.right = sucessor.right;
+			}
+			if (sucessor.right != null) {
+				sucessor.right.parent = sucessor.parent;
+			}
+
+			sucessor.right = null;
+			sucessor.parent = null;
+
+			// sucessor right now shouldn't have any left right or parent node
+
+			// swaping sucessor with target
+			sucessor.parent = targetNode.parent;
+			sucessor.left = targetNode.left;
+			targetNode.left.parent = sucessor;
+			sucessor.right = targetNode.right;
+			targetNode.right.parent = sucessor;
+
+			// refactoring the target's parent
+			if (targetNode.parent == null) {
+				// detecting the position of target with respect to parent
+				auxNode= sucessor;
+			}
+			
+			else{
+
+				if (targetNode.parent.left == targetNode) {
+					targetNode.parent.left = sucessor;
+				}
+				if (targetNode.parent.right == targetNode) {
+					targetNode.parent.right = sucessor;
+				}
+			}
+			targetNode = null;
+		}
 	}
 
 	public static void main(String[] args) {
 		Node n = new Node(15);
-
 		n.insertNode(new Node(6));
-		n.insertNode(new Node(8));
+		n.insertNode(new Node(18));
 		n.insertNode(new Node(3));
 		n.insertNode(new Node(7));
 		n.insertNode(new Node(17));
@@ -134,9 +205,11 @@ public class Node {
 		n.insertNode(new Node(4));
 		n.insertNode(new Node(13));
 		n.insertNode(new Node(9));
-		n.inOrder();
+		// n.inOrder();
 
-		n.searchData(13).sucessor().print();
+		n.deleteNode(17, n);
+		// System.out.println("---After Delete---");
+		n.inOrder();
 
 	}
 }
