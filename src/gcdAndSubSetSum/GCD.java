@@ -1,4 +1,4 @@
-package lab1;
+package gcdAndSubSetSum;
 
 public class GCD {
 
