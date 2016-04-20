@@ -1,60 +1,71 @@
 package binarySearchTree;
 
+import java.util.Random;
 
-public class Node {
-	private Node parent;
-	private Node left;
-	private Node right;
-	private int data;
+public class BST {
+	Node root;
 
-	public Node(int i) {
-		this.data = i;
-	}
+	class Node {
+		private Node parent;
+		private Node left;
+		private Node right;
+		private Object data;
 
-	public void insertNode(Node n) {
-
-		Node searchNode = this;
-		while (searchNode.nextNode(n) != null) {
-			searchNode = searchNode.nextNode(n);
+		public Node(Object i) {
+			this.data = i;			
 		}
 
-		n.parent = searchNode;
-
-		if (n.data < searchNode.data) {
-			searchNode.setLeft(n);
-
-			return;
-		}
-
-		searchNode.setRight(n);
-		;
-	}
-
-	public Node left() {
-		return this.left;
-	}
-
-	public Node right() {
-		return this.right;
-	}
-
-	private Node nextNode(Node n) {
-		if (n.data < this.data) {
+		public Node left() {
 			return this.left;
 		}
-		return this.right;
+
+		public Node right() {
+			return this.right;
+		}
+
+		@Override
+		public String toString() {
+			return "Node [data=" + data + "]";
+		}
+
+		// public void setLeft(Node n) {
+		// this.left = n;
+		// }
+		//
+		// private void setRight(Node n) {
+		// this.right = n;
+		public void insertNode(Object n) {
+			Node searchNode = this;			
+			while (searchNode.nextNode(n) != null) {
+				searchNode = searchNode.nextNode(n);
+			}
+			Node newNode = new Node(n);
+			newNode.parent = searchNode;
+
+			if ((int) newNode.data < (int) searchNode.data) {
+				searchNode.left = newNode;
+				return;
+			}
+			searchNode.right = newNode;		
+		}
+
+		private Node nextNode(Object n) {
+			if ((int) n < (int) this.data) {
+				return this.left;
+			}
+			return this.right;
+		}
+
+
 	}
 
-	private void setLeft(Node n) {
-		this.left = n;
+	public BST(Object data) {
+		root = new Node(data);
 	}
 
-	private void setRight(Node n) {
-		this.right = n;
-	}
-
+	
 	public void inOrder() {
-		inOrder(this);
+		inOrder(root);
 	}
 
 	public static void inOrder(Node n) {
@@ -70,7 +81,7 @@ public class Node {
 	}
 
 	public Node searchData(int i) {
-		return searchData(i, this);
+		return searchData(i, root);
 	}
 
 	public Node searchData(int i, Node n) {
@@ -78,32 +89,35 @@ public class Node {
 			return null;
 		}
 
-		if (n.data == i) {
+		if ((int) n.data == (int) i) {
 			return n;
 		}
-		if (i < n.data) {
+		if ((int) i < (int) n.data) {
 			return searchData(i, n.left);
 		}
 		return searchData(i, n.right);
 	}
 
 	private static Node minNode(Node n) {
-		Node searchNode = n;
-		while (searchNode.left != null) {
-			searchNode = searchNode.left;
-		}
-		return searchNode;
+		if (n.left == null)
+			return n;
+		else
+			return minNode(n.left);
 
 	}
 
 	private Node minNode() {
 
-		return minNode(this);
+		return minNode(root);
 
+	}
+	
+	public void insertNode(Object o){
+		root.insertNode(o);
 	}
 
 	public void print() {
-		System.out.println(data);
+		System.out.println(root);
 	}
 
 	public Node sucessorOf(Node n) {
@@ -120,17 +134,18 @@ public class Node {
 	}
 
 	public Node sucessor() {
-		return sucessorOf(this);
+		return sucessorOf(root);
 	}
+
+	// public void deleteNode(int o) {
+	// deleteNode(o, this);
+	// }
 
 	public void deleteNode(int o) {
-		deleteNode(o, this);
-	}
-
-	public void deleteNode(int o, Node n) {
-		Node auxNode = new Node(999999999);
-		auxNode.setRight(n);
-		Node targetNode = auxNode.searchData(o);
+		// Node auxNode = -999999999);
+		// auxNode.setRight(n);
+		// n.parent = auxNode;
+		Node targetNode = this.searchData(o);
 		if (targetNode == null) {
 			return;
 		}
@@ -151,7 +166,7 @@ public class Node {
 		}
 
 		else {
-			Node sucessor = auxNode.sucessorOf(targetNode);
+			Node sucessor = this.sucessorOf(targetNode);
 			if (sucessor.parent.left == sucessor) {
 				sucessor.parent.left = sucessor.right;
 			}
@@ -178,10 +193,10 @@ public class Node {
 			// refactoring the target's parent
 			if (targetNode.parent == null) {
 				// detecting the position of target with respect to parent
-				auxNode= sucessor;
+				root = sucessor;
 			}
-			
-			else{
+
+			else {
 
 				if (targetNode.parent.left == targetNode) {
 					targetNode.parent.left = sucessor;
@@ -192,24 +207,25 @@ public class Node {
 			}
 			targetNode = null;
 		}
+		
 	}
 
 	public static void main(String[] args) {
-		Node n = new Node(15);
-		n.insertNode(new Node(6));
-		n.insertNode(new Node(18));
-		n.insertNode(new Node(3));
-		n.insertNode(new Node(7));
-		n.insertNode(new Node(17));
-		n.insertNode(new Node(2));
-		n.insertNode(new Node(4));
-		n.insertNode(new Node(13));
-		n.insertNode(new Node(9));
-		// n.inOrder();
+		BST bst = new BST(15);
+		bst.insertNode(6);
+		bst.insertNode(18);
+		bst.insertNode(3);
+		bst.insertNode(7);
+		bst.insertNode(17);
+		bst.insertNode(2);
+		bst.insertNode(4);
+		bst.insertNode(13);
+		bst.insertNode(9);
+//		// n.inOrder();
 
-		n.deleteNode(17, n);
+		bst.deleteNode(1);
 		// System.out.println("---After Delete---");
-		n.inOrder();
+		bst.inOrder();
 
 	}
 }
